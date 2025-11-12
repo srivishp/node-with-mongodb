@@ -1,12 +1,16 @@
-// * Sequelize is an easy-to-use and promise-based Node.js ORM tool for Postgres, MySQL, MariaDB, SQLite, DB2, Microsoft SQL Server, and Snowflake.
-// * It features solid transaction support, relations, eager and lazy loading, read replication and more.
-//-> Basically, it means that sequelize will handle all the SQl related stuff. So that we can focus on the developer can focus on the Node JS stuff.
-//? ORM stands for Object Relational Mapping
-//# We make use of sequelize by using objects which sequelize will translate it into SQL queries in the background and carry out the task.
+// getDb method to get access to the database
+const getDb = require("../util/database").getDb;
+class Product {
+  constructor(id, title, imageUrl, description, price) {
+    this.id = id;
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
+  }
 
-const Sequelize = require("sequelize");
-
-const sequelize = require("../util/database");
+  save() {}
+}
 
 // Creating a model
 const Product = sequelize.define("product", {

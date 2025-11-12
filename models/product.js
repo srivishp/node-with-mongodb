@@ -2,8 +2,9 @@
 const getDb = require("../util/database").getDb;
 const mongodb = require("mongodb");
 class Product {
-  constructor(title, imageUrl, description, price) {
-    // We can add an id, but MongoDB will auto-generate its own unique '_id', which we will be using
+  constructor(id, title, imageUrl, description, price) {
+    // // We can add an id, but MongoDB will auto-generate its own unique '_id', which we will be using
+    this._id = new mongodb.ObjectId(id);
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -12,12 +13,22 @@ class Product {
 
   save() {
     const db = getDb();
-    // Collection in which we want to insert data
-    // If it doesn't exist, it will be created automatically
-    // Check MongoDB docs for all CRUD operations
-    return db
-      .collection("products")
-      .insertOne(this)
+    let dbOperation;
+    if (this._id) {
+      dbOperation = db
+        .collection("products")
+        //? UpdateOne does not replace an existing item
+        //-> $set operator updates the fields specified in the document
+        // here it is 'this' (id, title, imageUrl, description, price)
+        .updateOne({ _id: this._id }, { $set: this });
+    } else {
+      // Collection in which we want to insert data
+      // If it doesn't exist, it will be created automatically
+      // Check MongoDB docs for all CRUD operations
+      dbOperation = db.collection("products").insertOne(this);
+    }
+
+    return dbOperation
       .then((result) => {
         console.log(result);
       })

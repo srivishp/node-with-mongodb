@@ -1,5 +1,6 @@
 // getDb method to get access to the database
 const getDb = require("../util/database").getDb;
+const mongodb = require("mongodb");
 class Product {
   constructor(title, imageUrl, description, price) {
     // We can add an id, but MongoDB will auto-generate its own unique '_id', which we will be using
@@ -39,6 +40,23 @@ class Product {
         .then((products) => {
           console.log(products);
           return products;
+        })
+        .catch((err) => console.log(err))
+    );
+  }
+
+  static findById(prodId) {
+    const db = getDb();
+    return (
+      db
+        .collection("products")
+        // prodId is a string, but _id in MongoDB is an ObjectId
+        // So we need to convert it using mongodb package
+        .find({ _id: new mongodb.ObjectId(prodId) })
+        .next() // next() fetches the next document from the cursor
+        .then((product) => {
+          console.log(product);
+          return product;
         })
         .catch((err) => console.log(err))
     );

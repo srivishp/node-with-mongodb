@@ -29,15 +29,15 @@ exports.getProduct = (req, res, next) => {
 
   //* Using findById approach
   // findById is deprecated
-  Product.findByPk(prodId)
-    .then((product) => {
-      res.render("shop/product-detail", {
-        product: product,
-        pageTitle: product.title,
-        path: "/products",
-      });
-    })
-    .catch((err) => console.log(err));
+  // Product.findByPk(prodId)
+  //   .then((product) => {
+  //     res.render("shop/product-detail", {
+  //       product: product,
+  //       pageTitle: product.title,
+  //       path: "/products",
+  //     });
+  //   })
+  //   .catch((err) => console.log(err));
 };
 
 exports.getIndex = (req, res, next) => {

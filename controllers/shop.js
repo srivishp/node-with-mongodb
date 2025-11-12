@@ -27,17 +27,16 @@ exports.getProduct = (req, res, next) => {
   //   })
   //   .catch((err) => console.log(err));
 
-  //* Using findById approach
-  // findById is deprecated
-  // Product.findByPk(prodId)
-  //   .then((product) => {
-  //     res.render("shop/product-detail", {
-  //       product: product,
-  //       pageTitle: product.title,
-  //       path: "/products",
-  //     });
-  //   })
-  //   .catch((err) => console.log(err));
+  //* Displaying individual item using findById
+  Product.findById(prodId)
+    .then((product) => {
+      res.render("shop/product-detail", {
+        product: product,
+        pageTitle: product.title,
+        path: "/products",
+      });
+    })
+    .catch((err) => console.log(err));
 };
 
 exports.getIndex = (req, res, next) => {

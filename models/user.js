@@ -1,3 +1,4 @@
+const { getOrders } = require("../controllers/shop");
 const { get } = require("../routes/admin");
 
 const getDb = require("../util/database").getDb;
@@ -48,10 +49,6 @@ class User {
         { _id: new ObjectId(this._id) },
         { $set: { cart: updatedCart } }
       );
-
-    // const existingProductIndex = cartProducts.findIndex(
-    //   (cp) => cp.productId.toString() === product._id.toString()
-    // );
   }
 
   getCart() {
@@ -91,6 +88,45 @@ class User {
         { _id: new ObjectId(this._id) },
         { $set: { cart: { items: updatedCartItems } } }
       );
+  }
+
+  addOrder() {
+    const db = getDb();
+    // Including product information as part of the order
+    return (
+      this.getCart()
+        .then((products) => {
+          const order = {
+            items: products,
+            user: {
+              _id: new ObjectId(this._id),
+              name: this.name,
+            },
+          };
+          return db.collection("orders").insertOne(order);
+        })
+        // clean up cart after order is placed
+        .then((result) => {
+          this.cart = { items: [] };
+          return db
+            .collection("users")
+            .updateOne(
+              { _id: new ObjectId(this._id) },
+              { $set: { cart: { items: [] } } }
+            );
+        })
+    );
+  }
+
+  getOrders() {
+    const db = getDb();
+    return (
+      db
+        .collection("orders")
+        // In MongoDB, we can check nested properties by defining the path to them as a string.
+        .find({ "user._id": new ObjectId(this._id) })
+        .toArray()
+    );
   }
 
   static findById(userId) {

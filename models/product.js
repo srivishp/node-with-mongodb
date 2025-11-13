@@ -2,16 +2,17 @@
 const getDb = require("../util/database").getDb;
 const mongodb = require("mongodb");
 class Product {
-  constructor(id, title, imageUrl, description, price) {
+  constructor(title, imageUrl, description, price, id, userId) {
+    this.title = title;
+    this.imageUrl = imageUrl;
+    this.description = description;
+    this.price = price;
     // MongoDB will auto-generate its own unique '_id', but it is better to write our code
     // to handle both cases - when we create a new product and when we update an existing one
     //* Validate id before creating ObjectId to avoid BSON Error
     this._id =
       id && mongodb.ObjectId.isValid(id) ? new mongodb.ObjectId(id) : null;
-    this.title = title;
-    this.imageUrl = imageUrl;
-    this.description = description;
-    this.price = price;
+    this.userId = userId;
   }
 
   save() {

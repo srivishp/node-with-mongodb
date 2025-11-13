@@ -48,12 +48,50 @@ class User {
         { _id: new ObjectId(this._id) },
         { $set: { cart: updatedCart } }
       );
+
     // const existingProductIndex = cartProducts.findIndex(
     //   (cp) => cp.productId.toString() === product._id.toString()
     // );
   }
 
-  // Updating old cart with a new cart
+  getCart() {
+    const db = getDb();
+    const productIds = this.cart.items.map((i) => {
+      return i.productId;
+    });
+    return (
+      db
+        .collection("products")
+        // find returns a cursor
+        // $in operator to find all products whose _id is in the productIds array
+        .find({ _id: { $in: productIds } })
+        .toArray()
+        .then((products) => {
+          return products.map((p) => {
+            return {
+              ...p,
+              quantity: this.cart.items.find((i) => {
+                return i.productId.toString() === p._id.toString();
+              }).quantity,
+            };
+          });
+        })
+    );
+  }
+
+  deleteItemFromCart(productId) {
+    const updatedCartItems = this.cart.items.filter((item) => {
+      return item.productId.toString() !== productId.toString();
+    });
+
+    const db = getDb();
+    return db
+      .collection("users")
+      .updateOne(
+        { _id: new ObjectId(this._id) },
+        { $set: { cart: { items: updatedCartItems } } }
+      );
+  }
 
   static findById(userId) {
     const db = getDb();

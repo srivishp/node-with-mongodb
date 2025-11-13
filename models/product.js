@@ -3,8 +3,11 @@ const getDb = require("../util/database").getDb;
 const mongodb = require("mongodb");
 class Product {
   constructor(id, title, imageUrl, description, price) {
-    // // We can add an id, but MongoDB will auto-generate its own unique '_id', which we will be using
-    this._id = new mongodb.ObjectId(id);
+    // MongoDB will auto-generate its own unique '_id', but it is better to write our code
+    // to handle both cases - when we create a new product and when we update an existing one
+    //* Validate id before creating ObjectId to avoid BSON Error
+    this._id =
+      id && mongodb.ObjectId.isValid(id) ? new mongodb.ObjectId(id) : null;
     this.title = title;
     this.imageUrl = imageUrl;
     this.description = description;
@@ -71,6 +74,17 @@ class Product {
         })
         .catch((err) => console.log(err))
     );
+  }
+
+  static deleteById(prodId) {
+    const db = getDb();
+    return db
+      .collection("products")
+      .deleteOne({ _id: new mongodb.ObjectId(prodId) })
+      .then((result) => {
+        console.log("Deleted product");
+      })
+      .catch((err) => console.log(err));
   }
 }
 

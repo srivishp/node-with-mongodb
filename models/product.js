@@ -22,7 +22,7 @@ class Product {
       dbOperation = db
         .collection("products")
         //? UpdateOne does not replace an existing item
-        //-> $set operator updates the fields specified in the document
+        //> $set operator updates the fields specified in the document
         // here it is 'this' (id, title, imageUrl, description, price)
         .updateOne({ _id: this._id }, { $set: this });
     } else {
@@ -47,7 +47,7 @@ class Product {
         //! find() without any parameters fetches all the documents; could be millions of them
         // Ideally, we should pass params or use pagination in the app to limit data fetching
         //? find() also allows a cursor to be returned for more complex queries
-        //-> A cursor is an object that goes through our documents step-by-step
+        //> A cursor is an object that goes through our documents step-by-step
         .find()
         // MongoDB does not immediately return all matching documents. Instead, it returns a cursor object.
         //# We are using toArray() to interact with the cursor to get all the documents
